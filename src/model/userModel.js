@@ -2,7 +2,7 @@ import { EntitySchema } from "typeorm";
 
 const user = new EntitySchema ({
     name: "user",
-    tableName: "user", // nome da tabela
+    tableName: "tb_users", // nome da tabela
     columns: { // colunas
         id: {primary: true, type: "int", generated: "increment"},
         name: {type: "varchar", length: 80, nullable: false},

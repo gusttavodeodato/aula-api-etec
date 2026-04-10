@@ -2,9 +2,11 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "create_migration": "npx typeorm -d ./src/database/config.js migration:generate ./src/database/migrations/db --outputJs",
+    "execute_migration": "npx typeorm -d ./src/database/config.js migration:run"
   },
   "keywords": [],
   "author": "",
