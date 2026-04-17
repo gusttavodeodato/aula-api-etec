@@ -3,7 +3,7 @@ import routes from "./routes.js";
 import { appDataSource } from "./database/config.js"; // variavel com configurações do banco
 
 const server = express();
-
+server.use(express.json()); // para o express entender o formato json 
 server.use("/", routes);
 
 appDataSource.initialize().then(async() => {
