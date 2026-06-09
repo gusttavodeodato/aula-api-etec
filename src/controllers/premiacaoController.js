@@ -53,9 +53,10 @@ route.put("/:id", async (request, response) => {
             return response.status(400).send({message: "Nenhum dado para atualizar."})
     }}
     
-    if (!name_premiacao || name_premiacao.trim() === "") {
-        return response.status(400).send({message: "O nome da premiação não pode ser nulo (em branco)."})
-    } 
+    if(name_premiacao) {
+        if (!name_premiacao || name_premiacao.trim() === "") {
+            return response.status(400).send({message: "O nome da premiação não pode ser nulo (em branco)."})
+    }}
     
     if(valor_premio) {
         if(valor_premio === "" || valor_premio <= 0) {

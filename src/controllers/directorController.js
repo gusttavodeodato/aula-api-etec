@@ -25,7 +25,7 @@ route.get("/:name", async (request, response) => {
 route.post("/", async (request, response) => {
     const {name, sex, date_nasc, nacionality, photo_director} = request.body;
 
-    if(name == "" && sex == "" && date_nasc == "" && nacionality == "") {
+    if(name === "" && sex === "" && date_nasc === "" && nacionality === "") {
         return response.status(400).send({message: "Nenhum dado do diretor para seguir o cadastro."});
     }
 
@@ -33,15 +33,17 @@ route.post("/", async (request, response) => {
         return response.status(400).send({message: "O nome deve conter mais de 2 caracteres."});
     }
     
-    if(sex.toUpperCase() !== "M".toUpperCase() && sex.toUpperCase() !== "F".toUpperCase()) {
-        return response.status(400).send({message: "O sexo deve ser informado como 'M' ou 'F'."})
-    }
+    if(sex) {
+        const sexUpper = sex.toUpperCase();
+        if(sexUpper !== "M" && sexUpper !== "F") {
+            return response.status(400).send({message: "O sexo deve ser informado como 'M' ou 'F'."})
+    }}
 
-    if(!date_nasc || date_nasc.trim() == ""){
+    if(!date_nasc || date_nasc.trim() === ""){
         return response.status(400).send({message: "A data de nascimento não pode ser vazia."});
     }
 
-    if(!nacionality || nacionality.trim() == "") {
+    if(!nacionality || nacionality.trim() === "") {
         return response.status(400).send({message: "A nacionalidade não pode ser nula (em branco)."})
     }
 
@@ -55,27 +57,35 @@ route.put("/:id", async (request, response) => {
     const {name, sex, date_nasc, nacionality, photo_director} = request.body;
     const {id} = request.params;
 
-    if(name) {
-        if(name == "" && sex == "" && date_nasc == "" && nacionality == "") {
-            return response.status(400).send({message: "Nenhum dado para atualizar"});
-    }}
-
-    if(name.length < 2) {
-        return response.status(400).send({message: "O nome deve conter mais de 2 caracteres."});
+    if(!name && !sex && !date_nasc && !nacionality && !photo_director) {
+        return response.status(400).send({message: "Nenhum dado para atualizar"});
     }
+
+    if(name !== undefined) {
+        if(name.trim().length < 3) {
+        return response.status(400).send({message: "O nome deve conter mais de 2 caracteres."});
+    }}
     
     if(sex) {
-        if(sex.toUpperCase() !== "M".toUpperCase() && sex.toUpperCase() !== "F".toUpperCase()) {
+        const sexUpper = sex.toUpperCase();
+        if(sexUpper !== "M" && sexUpper !== "F") {
             return response.status(400).send({message: "O sexo deve ser informado como 'M' ou 'F'."})
     }}
 
-    if(date_nasc) {
-        if(!date_nasc || date_nasc.trim() == ""){
+    if(date_nasc !== undefined) {
+        if(date_nasc.trim() === ""){
             return response.status(400).send({message: "A data de nascimento não pode ser vazia."});
-    }}
+    }
 
-    if(nacionality) {
-        if(!nacionality || nacionality.trim() == "") {
+    const regexData = /^\d{4}-\d{2}-\d{2}$/;
+
+    if(!regexData.test(date_nasc)) {
+        return response.status(400).send({message: "Data de nascimento incompleta. Digite o formato completo (AAAA-MM-DD)."})
+    }
+}
+
+    if(nacionality !== undefined) {
+        if(nacionality.trim() === "") {
             return response.status(400).send({message: "A nacionalidade não pode ser nula (em branco)."})
     }}
 

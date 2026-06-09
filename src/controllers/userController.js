@@ -41,8 +41,11 @@ route.post("/", async (request, response) => {
         return response.status(400).send({message: "A senha deve conter mais de 6 caracteres."});
     }
 
-    if (typeUser.toUpperCase() !== "admin".toUpperCase() && typeUser.toUpperCase() !== "comum".toUpperCase()) {
-        return response.status(400).send({message: "O tipo de usuário deve ser 'admin' ou 'comum'."});
+    if(typeUser){
+        const typeUpper = typeUser.toUpperCase();
+        if(typeUpper !== "admin" && typeUpper !== "comum") {
+            return response.status(400).send({message: "O tipo de usuário deve ser 'admin' ou 'comum'."});
+        }
     }
 
     const dataUser = userTable.create({name, email, password, typeUser});
@@ -55,27 +58,35 @@ route.put("/:id", async (request, response) => {
     const {name, email, password, typeUser} = request.body;
     const {id} = request.params;
 
-    if(name) {
-        if(name === "" && email === "" && password === "" && typeUser === "") {
-            return response.status(400).send({message: "Nenhuma informação para atualizar."})
-    }}
-
-    if (name.length < 2) {
-        return response.status(400).send({message: "O nome deve conter mais de 2 caracteres."});
+    if(!name && !email && !password && !typeUser) {
+        return response.status(400).send({message: "Nenhuma informação para atualizar."})
     }
 
-    if(email) {
-        if(!email.includes("@")) {
-            return response.status(400).send({message: "O email deve conter um '@'."});
+    if(name !== undefined) {
+        if (name.trim().length < 3) {
+            return response.status(400).send({message: "O nome deve conter mais de 2 caracteres."});
     }}
 
-    if(password) {
+    if(email !== undefined) {
+        if(email.trim() === "") {
+            return response.status(400).send({message: "O email deve conter um '@'."});
+    }
+
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if(!regexEmail.test(email.trim())) {
+        return response.status(400).send({message: "Por favor, informe um e-mail válido."})
+    }
+}
+
+    if(password !== undefined) {
         if(password.length <= 6) {
             return response.status(400).send({message: "A senha deve conter mais de 6 caracteres."});
     }}
 
-    if(typeUser) {
-        if(typeUser.toUpperCase() !== "admin".toUpperCase() && typeUser.toUpperCase() !== "comum".toUpperCase()) {
+    if(typeUser !== undefined) {
+        const typeUpper = typeUpper.toUpperCase();
+        if(typeUpper !== "admin" && typeUpper !== "comum") {
             return response.status(400).send({message: "O tipo de usuário deve ser 'admin' ou 'comum'."});
     }}
 
@@ -84,7 +95,7 @@ route.put("/:id", async (request, response) => {
     return response.status(200).send({message: "Dados do usuário atualizados com sucesso."})
 });
 
-/* Hard Delete = exclui linha do banco */
+/* Hard Delete = exclui linha do banco *
 /* route.delete("/:id", async (request, response ) => {
     const {id} = request.params;
 

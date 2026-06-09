@@ -25,29 +25,27 @@ route.get("/:name", async (request, response) => {
 route.post("/", async (request, response) => {
     const {name, sex, date_nasc, nacionality, photo_actor} = request.body;
 
-    if(name) {
-        if(name == "" && sex == "" && date_nasc == "" && nacionality == "") {
-            return response.status(400).send({message: "Nenhum dado do ator para seguir o cadastro."});
-    }}
+    if(name === "" && sex === "" && date_nasc === "" && nacionality === "") {
+        return response.status(400).send({message: "Nenhum dado do ator para seguir o cadastro."});
+    }
 
     if(name.length < 2) {
         return response.status(400).send({message: "O nome deve conter mais de 2 caracteres."});
     }
 
     if(sex) {
-        if(sex.toUpperCase() !== "M".toUpperCase() && sex.toUpperCase() !== "F".toUpperCase()) {
-            return response.status(400).send({message: "O sexo deve ser informado como 'M' ou 'F'."})
+        const sexUpper = sex.toUpperCase();
+        if(sexUpper !== "M" && sexUpper !== "F") {
+            return response.status(400).send({message: "O sexo deve ser informado como 'M' ou 'F'."});
     }}
 
-    if(date_nasc) {
-        if(!date_nasc || date_nasc.trim() == ""){
+    if(!date_nasc || date_nasc.trim() === ""){
             return response.status(400).send({message: "A data de nascimento não pode ser vazia."});
-    }}
+    }
 
-    if(nacionality) {
-        if(!nacionality || nacionality.trim() == "") {
-            return response.status(400).send({message: "A nacionalidade não pode ser nula (em branco)."})
-    }}
+    if(!nacionality || nacionality.trim() === "") {
+            return response.status(400).send({message: "A nacionalidade não pode ser nula (em branco)."});
+    }
 
     console.log(request.body);
 

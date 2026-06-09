@@ -47,13 +47,15 @@ route.put("/:id", async (request, response) => {
             return response.status(400).send({message: "Nenhum dado para atualizar."});
     }}
     
-    if(!name_genero || name_genero.trim() == "") {
+    if(name_genero) {
+        if(!name_genero || name_genero.trim() == "") {
         return response.status(400).send({message: "O gênero não pode ser nulo (em branco)"})
-    }
+    }}
 
-    if(name_genero.length < 3 || name_genero > 30) {
+    if(name_genero) {
+        if(name_genero.length < 3 || name_genero > 30) {
         return response.status(400).send({message: "O gênero deve ter entre 3 a 30 caracteres."})
-    }
+    }}
 
     await generoTable.update({id}, {name_genero});
 
