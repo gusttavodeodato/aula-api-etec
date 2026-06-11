@@ -4,6 +4,7 @@ import user from "../model/userModel.js";
 import {IsNull} from "typeorm";
 import { generateNewPassword } from "../utils/login.js";
 import { sendEmail } from "../helpers/nodemailer.js";
+import { generateToken } from "../utils/jwt.js";
 
 const route = express.Router();
 const userTable = appDataSource.getRepository(user);
@@ -13,12 +14,17 @@ route.post("/", async (request, response) => {
 
     const loginUser = await userTable.findOneBy({email, password, deletedAt: IsNull()});
 
-    if(loginUser) {
-        return response.status(200).send({message: "Login efetuado com sucesso!"})
-    } else {
-        return response.status(401).send({message: "Login inválido."})
+    if(!loginUser) {
+        return response.status(401).send({message: "Usuário ou senha inválido."});
     }
-    
+
+    const token = generateToken({
+        user: loginUser.name, 
+        email:loginUser.email, 
+        typeUser: loginUser.typeUser
+    });
+
+    return response.status(200).send({message: "Login efetuado com sucesso!", token});
 });
 
 route.put("/reset", async (request, response) => {

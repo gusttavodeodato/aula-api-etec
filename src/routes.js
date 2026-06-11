@@ -4,16 +4,17 @@ import actorController from "./controllers/actorController.js"
 import directorController from "./controllers/directorController.js";
 import generoController from "./controllers/generoController.js";
 import premiacaoController from "./controllers/premiacaoController.js";
-import loginController from "./controllers/loginController.js"
+import loginController from "./controllers/loginController.js";
+import { authenticate } from "./utils/jwt.js";
 
 // variavel routes instanciando express
 const routes = express();
 
 routes.use("/user", userController);
-routes.use("/actor", actorController);
-routes.use("/director", directorController);
-routes.use("/genero", generoController);
-routes.use("/premiacao", premiacaoController);
+routes.use("/actor", authenticate, actorController);
+routes.use("/director", authenticate, directorController);
+routes.use("/genero", authenticate, generoController);
+routes.use("/premiacao", authenticate, premiacaoController);
 routes.use("/login", loginController);
 
 export default routes;
