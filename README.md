@@ -11,6 +11,7 @@ API REST desenvolvida em Node.js para gerenciar um catálogo de filmes, permitin
 - **TypeORM** — ORM e gerenciamento de migrations
 - **PostgreSQL** — banco de dados relacional
 - **Nodemailer** — envio de e-mail para recuperação de senha
+- **jsonwebtoken** — autenticação e proteção de rotas via token JWT
 - **dotenv** — carregamento de variáveis de ambiente
 - **nodemon** — reinicialização automática em desenvolvimento
 ---
@@ -120,7 +121,8 @@ Todos os recursos suportam: listar, buscar por nome, cadastrar, editar e excluir
  
 ```
 src/
-├── controllers/       # Lógica de cada rota (Express Router)
+├── controllers/       # Recebe as requisições e chama os services
+├── services/          # Regras de negócio da aplicação
 ├── database/
 │   ├── config.js      # Configuração do DataSource (TypeORM)
 │   └── migrations/    # Migrations do banco de dados
@@ -132,6 +134,36 @@ src/
 ├── utils/
 │   └── login.js       # Geração de nova senha
 └── index.js           # Ponto de entrada da aplicação
+
 ```
  
+---
+
+## Autenticação
+
+A API utiliza **JWT (Json Web Token)** para proteger as rotas. O token é gerado no login e deve ser enviado no header de todas as requisições protegidas com *authenticate*.
+
+**Obtendo o token:**
+```http
+POST /login
+
+{
+    "email": "seu@email.com",
+    "password": "sua_senha"
+}
+```
+
+**Usando o token:**
+```http
+GET /actor
+Autorization: Bearer <seu_token>
+```
+
+O token expira em **1 hora**. Após esse tempo, é necessário fazer login novamente.
+
+**Atenção:** gere uma senha forte para o `JWT_SECRET` com o comando abaixo e adicione no `.env`:
+>```bash
+> node -e "console.log(require)('crypto').randomBytes(64).toString('hex'))"
+>```
+
 ---

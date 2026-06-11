@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
+import dotenv from "dotenv";
 
-const secret = "ChaveDeCriptoGR@fi4!!";
+dotenv.config();
+
+const secret = process.env.JWT_SECRET;
 
 function generateToken(payload) {
     return jwt.sign(payload, secret, {expiresIn: 60*60*1});
