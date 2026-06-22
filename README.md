@@ -12,6 +12,8 @@ API REST desenvolvida em Node.js para gerenciar um catálogo de filmes, permitin
 - **PostgreSQL** — banco de dados relacional
 - **Nodemailer** — envio de e-mail para recuperação de senha
 - **jsonwebtoken** — autenticação e proteção de rotas via token JWT
+- **Multer** — upload de arquivos
+- **Cloudinary** — armazenamento de imagens na nuvem
 - **dotenv** — carregamento de variáveis de ambiente
 - **nodemon** — reinicialização automática em desenvolvimento
 ---
@@ -41,6 +43,14 @@ Crie um arquivo `.env` na raiz do projeto:
 # E-mail (recuperação de senha)
 EMAIL_USER=seu_email@gmail.com
 EMAIL_PASS=sua_senha_de_app_gmail
+
+# JWT
+JWT_SECRET=sua_chave_secreta_jwt
+
+# Cloudinary
+CD_NAME=seu_cloud_name
+API-KEY=sua_chave_api
+API_SECRET=seu_api_secret
  
 # Banco de dados
 DB_HOST=localhost
@@ -112,6 +122,7 @@ O servidor sobe na porta **3333**.
 | `/director`  | Cadastro de diretores                |
 | `/genero`    | Cadastro de gêneros de filmes        |
 | `/premiacao` | Cadastro de premiações               |
+| `/upload`    | Upload de foto de perfil do usuário (protegida por JWT)|
  
 Todos os recursos suportam: listar, buscar por nome, cadastrar, editar e excluir (soft delete).
  
@@ -127,14 +138,15 @@ src/
 │   ├── config.js      # Configuração do DataSource (TypeORM)
 │   └── migrations/    # Migrations do banco de dados
 ├── helpers/
-│   └── nodemailer.js  # Envio de e-mail
+│   ├── nodemailer.js  # Envio de e-mail
+│   └── cloudinary.js  # Configuração do Cloudinary
 ├── model/             # Entidades do TypeORM (tabelas)
 ├── templates/
 │   └── changePassword.html
+├── upload/            # Pasta temporária dos arquivos (Multer)
 ├── utils/
 │   └── login.js       # Geração de nova senha
 └── index.js           # Ponto de entrada da aplicação
-
 ```
  
 ---
@@ -166,4 +178,25 @@ O token expira em **1 hora**. Após esse tempo, é necessário fazer login novam
 > node -e "console.log(require)('crypto').randomBytes(64).toString('hex'))"
 >```
 
+---
+
+## Upload de foto de perfil
+
+O upload de imagens é feito com **Multer** (rebece o arquivo) e **Cloudinary** (armazena na nuvem). A URL da imagem é salva no banco, vinculada a o usuário.
+
+**Configurando o Cloudinary:**
+1. Crie uma conta em [cloudinary.com](https://cloudinary.com/)
+2. Acesse **Settings → API Keys**
+3. Copie `Cloud Name`, `API Key` e `API Secret` e adicione no `.env`
+**Enviando uma foto de perfil:**
+```http
+POST /upload
+Authorization: Bearer <seu_token>
+Content-Type: multipart/form-data
+ 
+uploads: <arquivo>
+```
+ 
+A rota é protegida por JWT — o usuário precisa estar logado para enviar uma foto. O arquivo é salvo temporariamente em `src/upload/`, enviado ao Cloudinary e removido do servidor local após o upload.
+ 
 ---
